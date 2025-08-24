@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// generator nestjs_dto {
+//  provider                        = "prisma-generator-nestjs-dto"
+//  output                          = "../_generated-dto"
+//  outputToNestJsResourceStructure = "true"
+// }
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----Database-----
+
+enum OrderStatus {
+  Pending
+  Paid
+  Shipping
+  Shipped
+  Completed
+  Cancelled
+}
+
+enum PaymentMethod {
+  Cash
+  Credit_Card
+  Paypal
+  Cod
+  Bank_Transfer
+}
+
+enum PaymentStatus {
+  Pending
+  Success
+  Failed
+  Refunded
+}
+
+enum UserRole {
+  Admin
+  Seller
+  Customer
+}
+
+// -----Model-----
+
+model User {
+  id          String   @id
+  fullName    String   @map("full-name")
+  username    String
+  hash        String
+  phoneNumber String?  @map("phone-number")
+  email       String?
+  birthDate   BigInt   @map("birth-date") @default(0)
+  role        UserRole
+  active      Boolean  @default(true)
+  alive       Boolean  @default(true)
+  createdAt   BigInt   @map("created_at")
+  createdBy   String   @map("created_by")
+  updatedAt   BigInt   @map("updated_at")
+  updatedBy   String   @map("updated_by")
+
+  @@unique([id])
+  @@map("user")
+}
+
+model Permission {
+  id        String     @id
+  name      String
+  url       String
+  role      UserRole[]
+  active    Boolean    @default(true)
+  alive     Boolean    @default(true)
+  createdAt BigInt     @map("created_at")
+  createdBy String     @map("created_by")
+  updatedAt BigInt     @map("updated_at")
+  updatedBy String     @map("updated_by")
+
+  @@unique([id, url])
+  @@map("permission")
+}
+
+model Product {
+  id                String            @id
+  name              String
+  slug              String
+  description       String?
+  price             Float             @default(0)
+  stock             Int               @default(0)
+  active            Boolean           @default(true)
+  alive             Boolean           @default(true)
+  createdAt         BigInt            @map("created_at")
+  createdBy         String            @map("created_by")
+  updatedAt         BigInt            @map("updated_at")
+  updatedBy         String            @map("updated_by")
+  productCategories ProductCategory[]
+  orderItems        OrderItem[]
+  cartItems         CartItem[]
+
+  @@unique([id, slug])
+  @@map("product")
+}
+
+model Category {
+  id                String            @id
+  name              String
+  slug              String
+  active            Boolean           @default(true)
+  alive             Boolean           @default(true)
+  createdAt         BigInt            @map("created_at")
+  createdBy         String            @map("created_by")
+  updatedAt         BigInt            @map("updated_at")
+  updatedBy         String            @map("updated_by")
+  productCategories ProductCategory[]
+
+  @@unique([id, slug])
+  @@map("category")
+}
+
+model ProductCategory {
+  id         String   @id
+  productId  String   @map("product_id")
+  product    Product  @relation(fields: [productId], references: [id])
+  categoryId String   @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+  active     Boolean  @default(true)
+  alive      Boolean  @default(true)
+  createdAt  BigInt   @map("created_at")
+  createdBy  String   @map("created_by")
+  updatedAt  BigInt   @map("updated_at")
+  updatedBy  String   @map("updated_by")
+
+  @@map("product_category")
+}
+
+model CartItem {
+  id         String  @id
+  customerId String? @map("customer_id")
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @map("product_id")
+
+  quantity  Int     @default(1)
+  alive     Boolean @default(true)
+  createdAt BigInt  @map("created_at")
+  createdBy String  @map("created_by")
+  updatedAt BigInt  @map("updated_at")
+  updatedBy String  @map("updated_by")
+
+  @@unique([id, productId])
+  @@map("cart_item")
+}
+
+model Order {
+  id          String      @id
+  code        String
+  customerId  String?     @map("customer_id")
+  totalPrice  Float       @default(0) @map("total_price")
+  status      OrderStatus @default(Pending)
+  orderNumber Int         @map("order_number")
+  orderItems  OrderItem[]
+  active      Boolean     @default(true)
+  createdAt   BigInt      @map("created_at")
+  createdBy   String      @map("created_by")
+  updatedAt   BigInt      @map("updated_at")
+  updatedBy   String      @map("updated_by")
+  payments    Payment[]
+
+  @@unique([id, code])
+  @@map("order")
+}
+
+model OrderItem {
+  id        String  @id
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(0)
+  name      String
+  price     Float   @default(0)
+  active    Boolean @default(true)
+  createdAt BigInt  @map("created_at")
+  createdBy String  @map("created_by")
+  updatedAt BigInt  @map("updated_at")
+  updatedBy String  @map("updated_by")
+
+  @@map("order_item")
+}
+
+model Payment {
+  id            String        @id
+  orderId       String        @map("order_id")
+  order         Order         @relation(fields: [orderId], references: [id])
+  method        PaymentMethod @default(Cash)
+  amount        Decimal       @db.Decimal(15, 5)
+  status        PaymentStatus @default(Pending)
+  transactionId String?       @map("transaction_id") // nullable nếu không có mã giao dịch
+  paidAt        BigInt?       @map("paid_at") // nullable nếu chưa thanh toán
+  active        Boolean       @default(true)
+  createdAt     BigInt        @map("created_at")
+  createdBy     String        @map("created_by")
+  updatedAt     BigInt        @map("updated_at")
+  updatedBy     String        @map("updated_by")
+
+  @@map("payment")
+}
