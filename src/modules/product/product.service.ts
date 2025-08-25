@@ -17,6 +17,9 @@ export class ProductService {
   async findList(filers: FilterParams): Promise<PaginationItemModel<ProductRes | null>> {
     return this.productRepo.findList(filers)
   }
+  async findListByCategory(categoryId: string, filers: FilterParams): Promise<PaginationItemModel<ProductRes | null>> {
+    return this.productRepo.findListByCategory(categoryId, filers)
+  }
 
   async findOne(id: string): Promise<ProductRes | null> {
     return this.productRepo.findOne(id)

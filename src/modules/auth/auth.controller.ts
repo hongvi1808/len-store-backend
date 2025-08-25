@@ -31,10 +31,10 @@ export class AuthController {
   async register(@Body() body: RegisterAuthDto) {
     return this.authService.register(body)
   }
-
+  @NoGlobalAuth()
   @UseGuards(RefreshTokenAuthGuard)
   @UseInterceptors(SetCookieInterceptor)
-  @Get('refresh-token')
+  @Get('refresh')
   async refrehToken(@SessionUser() user: SessionUserModel) {
     return this.authService.refreshToken(user)
   }
@@ -42,7 +42,7 @@ export class AuthController {
   @Get('/logout')
     logout(@SessionUser() user: SessionUserModel, @Res({ passthrough: true }) res: Response) {
         const result = this.authService.logout(user);
-        res.clearCookie('refresh-token', {
+        res.clearCookie(SYSTEM_KEY.RefreshTokenCookieKey, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
             sameSite: 'strict', // Adjust as necessary

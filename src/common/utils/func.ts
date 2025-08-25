@@ -10,8 +10,8 @@ export const forceToInfoPagition = (
     page: number = 0,
     limit: number = 20,
 ): { skip: number; take: number; page: number } => {
-    page = +page;
-    const skip = +limit * +page - +limit;
+    page = +(page);
+    const skip = +limit * +(page + 1) - +limit;
     const take = +limit > -1 && +limit < 100 ? +limit : 100;
 
     return { skip, take, page };

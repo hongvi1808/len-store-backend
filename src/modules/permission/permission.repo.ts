@@ -14,7 +14,7 @@ export class PermissionRepo {
         if (filters) {
             const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
             const items = await this.db.permission.findMany({
-                where: { ...whereOpt, name: filters.search },
+                where: { ...whereOpt },
                 orderBy: { updatedAt: 'desc' },
                 skip, take,
                 select: defaultSelect

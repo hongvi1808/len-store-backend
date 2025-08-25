@@ -11,7 +11,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const errorRes: ResErrorModel = {
       success: false,
-      code: 'ERROR',
+      code:  exception?.code || 'ERROR',
       statusCode: status,
       message: exception.message,
       error: response?.error || exception.name || 'Error',
@@ -41,7 +41,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         errorRes.code = 'NOT_FOUND_ERROR'
         break;
       case HttpStatus.NOT_ACCEPTABLE:
-        errorRes.code = 'NOT_ACCEPTABLE'
+        errorRes.code = exception?.code || 'NOT_ACCEPTABLE'
         break;
 
       default:

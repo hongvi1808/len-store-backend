@@ -55,12 +55,12 @@ enum UserRole {
 
 model User {
   id          String   @id
-  fullName    String   @map("full-name")
+  fullName    String   @map("full_name")
   username    String
   hash        String
-  phoneNumber String?  @map("phone-number")
+  phoneNumber String?  @map("phone_number")
   email       String?
-  birthDate   BigInt   @map("birth-date") @default(0)
+  birthDate   BigInt   @default(0) @map("birth_date")
   role        UserRole
   active      Boolean  @default(true)
   alive       Boolean  @default(true)
@@ -94,6 +94,7 @@ model Product {
   name              String
   slug              String
   description       String?
+  images            Json?             @default("[]")
   price             Float             @default(0)
   stock             Int               @default(0)
   active            Boolean           @default(true)
@@ -114,6 +115,7 @@ model Category {
   id                String            @id
   name              String
   slug              String
+  tag               String?
   active            Boolean           @default(true)
   alive             Boolean           @default(true)
   createdAt         BigInt            @map("created_at")

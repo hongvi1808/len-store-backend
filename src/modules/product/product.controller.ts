@@ -10,14 +10,18 @@ import { FilterParams } from 'src/common/models/filter-params.model';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
+  @Post('/')
   create(@SessionUser() user: SessionUserModel, @Body() createProductDto: CreateProductDto) {
     return this.productService.create(user, createProductDto);
   }
 
-  @Get()
+  @Get('/')
   findAll(@Query() filter: FilterParams) {
     return this.productService.findList(filter);
+  }
+  @Get('/category/:id')
+  findAllByCategory(@Param('id') categoryId: string,@Query() filter: FilterParams) {
+    return this.productService.findListByCategory(categoryId, filter);
   }
 
   @Get(':id')

@@ -8,30 +8,30 @@ import { FilterParams } from 'src/common/models/filter-params.model';
 
 @Controller('category')
 export class CategoryController {
-  constructor(private readonly productService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
+  @Post('/')
   create(@SessionUser() user: SessionUserModel, @Body() createCategoryDto: CreateCategoryDto) {
-    return this.productService.create(user,createCategoryDto);
+    return this.categoryService.create(user,createCategoryDto);
   }
 
-  @Get()
+  @Get('/')
   findAll(@Query() filter: FilterParams) {
-    return this.productService.findList(filter);
+    return this.categoryService.findList(filter);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+    return this.categoryService.findOne(id);
   }
 
   @Put(':id')
   update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.productService.update(id,user, updateCategoryDto);
+    return this.categoryService.update(id,user, updateCategoryDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @SessionUser() user: SessionUserModel,) {
-    return this.productService.remove(id,user);
+    return this.categoryService.remove(id,user);
   }
 }

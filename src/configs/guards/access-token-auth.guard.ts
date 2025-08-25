@@ -1,9 +1,11 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { NO_GLOBAL_AUTH } from '../decorators/no-auth.decorator';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
+import { TokenExpiredError } from '@nestjs/jwt';
+import { CustomExceptionFilter } from '../filters/custom-exception.filter';
 
 @Injectable()
 export class AccessTokenAuthGuard extends AuthGuard(SYSTEM_KEY.AccessTokenPassportKey) {
@@ -20,4 +22,15 @@ export class AccessTokenAuthGuard extends AuthGuard(SYSTEM_KEY.AccessTokenPasspo
         
         return super.canActivate(context);
     }
+    handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
+    if (info instanceof TokenExpiredError) {
+      throw new CustomExceptionFilter('TOKEN_EXPIRED', 'Token is expired')
+    }
+
+    if (err || !user) {
+      throw err || new UnauthorizedException('Invalid token');
+    }
+
+    return user;
+  }
 }

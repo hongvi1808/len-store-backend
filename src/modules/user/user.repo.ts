@@ -8,6 +8,11 @@ import { forceToInfoPagition } from 'src/common/utils/func';
 import { Prisma } from '@prisma/client';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
 
+const defaultSelect = {
+  id: true, phoneNumber: true, fullName: true,
+  email: true, role: true, username: true, birthDate: true
+}
+
 @Injectable()
 export class UserRepo {
   constructor(private readonly db: PrismaService) { }
@@ -15,26 +20,19 @@ export class UserRepo {
   async create(data: Prisma.UserCreateInput): Promise<any> {
     const result = await this.db.user.create({
       data,
-      select: {
-        id: true,
-        phoneNumber: true,
-        fullName: true,
-        email: true,
-        role: true,
-        hash: true
-      },
+      select: defaultSelect,
     });
     return result;
   }
 
   async findList(filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt = { fullName: filters.search, alive: true, active: true }
+    const whereOpt = {  alive: true, active: true }
     const items = await this.db.user.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
       skip, take,
-      select: { id: true, fullName: true, phoneNumber: true, email: true, birthDate: true }
+      select: defaultSelect
     })
     const total = await this.db.user.count({ where: whereOpt })
     return new PaginationItemModel(items, total, page, take)
@@ -45,12 +43,7 @@ export class UserRepo {
       where: {
         id: id,
       },
-      select: {
-        id: true,
-        phoneNumber: true,
-        fullName: true,
-        email: true,
-      },
+      select: defaultSelect,
     });
     return foundUser;
   }
@@ -59,12 +52,7 @@ export class UserRepo {
       where: {
         username,
       },
-      select: {
-        id: true,
-        phoneNumber: true,
-        fullName: true,
-        email: true,
-      },
+      select: { ...defaultSelect, hash: true },
     });
     return foundUser;
   }
@@ -73,6 +61,7 @@ export class UserRepo {
       where: {
         phoneNumber: phoneNumber, alive: true, active: true
       },
+      select: defaultSelect
     });
     return foundUser;
   }

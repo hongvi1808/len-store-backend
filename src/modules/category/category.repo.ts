@@ -9,6 +9,7 @@ import { forceToInfoPagition, genBaseSlug } from 'src/common/utils/func';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
 
+const defaultSelect = { id: true, name: true, slug: true, tag: true}
 @Injectable()
 export class CategoryRepo {
   constructor(private readonly db: PrismaService) { }
@@ -18,23 +19,24 @@ export class CategoryRepo {
       id: uuidv7(),
       name: body.name,
       slug,
+      tag: body.tag,
       createdAt: new Date().getTime(),
       createdBy: user.username,
       updatedAt: new Date().getTime(),
       updatedBy: user.username
     }
-    const res = await this.db.category.create({ data, select: { id: true, slug: true } })
+    const res = await this.db.category.create({ data, select: defaultSelect })
     return res;
   }
 
   async findList(filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt: Prisma.CategoryWhereInput = { name: filters.search, alive: true, active: true }
+    const whereOpt: Prisma.CategoryWhereInput = { alive: true, active: true }
     const items = await this.db.category.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
       skip, take,
-      select: { id: true, slug: true, name: true }
+      select: defaultSelect
     })
     const total = await this.db.category.count({ where: whereOpt })
     return new PaginationItemModel(items, total, page, take)
@@ -51,12 +53,12 @@ export class CategoryRepo {
   async update(id: string, user: SessionUserModel, body: UpdateCategoryDto) {
     const slug = await this.uniqueSlug(genBaseSlug(body.name || ''))
     const data: Prisma.CategoryUpdateInput = {
-      name: body.name,
       slug,
+      ...body,
       updatedAt: new Date().getTime(),
       updatedBy: user.username
     }
-    const res = await this.db.category.update({ where: { id }, data, select: { id: true, slug: true } })
+    const res = await this.db.category.update({ where: { id }, data, select: defaultSelect})
     return res;
   }
 
@@ -66,7 +68,7 @@ export class CategoryRepo {
       updatedBy: user.username,
       alive: false
     }
-    const res = await this.db.category.update({ where: { id }, data, select: { id: true, slug: true } })
+    const res = await this.db.category.update({ where: { id }, data, select: defaultSelect })
     return res;
   }
 

@@ -6,8 +6,3 @@ export enum SYSTEM_KEY {
     PrefixKeySessionBlackList='session_id_blacklist__'
 
 }
-
-export enum FIREBASE_STORAGE_DIR_NAME {
-    Product = 'product-images',
-    Avatar = 'person-avatar'
-}

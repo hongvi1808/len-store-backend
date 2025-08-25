@@ -10,7 +10,6 @@ import { GlobalExceptionFilter } from './configs/filters/global-exception.filter
 import { GlobalValidationPipe } from './configs/pipes/global-validation.pipe';
 import { TrimPipe } from './configs/pipes/trim.pipe';
 import { ResponseFormatInterceptor } from './configs/interceptions/response-format.interceptor';
-import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
 import { QUEUES } from './common/rabbitmq/rabbit.contant';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
@@ -20,7 +19,7 @@ async function bootstrap() {
 
   const port = config.get<number>('PORT', { infer: true })
 
-  app.enableCors();
+  app.enableCors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000', credentials: true,   });
 
   app.use(bodyParser.json({ limit: '50mb' }))
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))

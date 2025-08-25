@@ -15,7 +15,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, SYSTEM_KEY.A
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: configService.get<string>('JWT_SECRET', ''),
-            passReqToCallback: true // cho phep goi Request trong validate
+            passReqToCallback: true, // cho phep goi Request trong validate
         });
     }
 

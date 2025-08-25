@@ -71,7 +71,8 @@ export class AuthService {
     }
 
     async refreshToken(sUser: SessionUserModel): Promise<AuthResponse> {
-        const { accessToken, expiredAt } = await this.generateAccessToken(sUser);
+        const payload: SessionUserModel = {role: sUser.role, userId: sUser.userId, username: sUser.username, sid: uuidv7()}
+        const { accessToken, expiredAt } = await this.generateAccessToken(payload);
         return { accessToken, expiredAt, userId: sUser.userId }
     }
     async logout(sUser: SessionUserModel) {

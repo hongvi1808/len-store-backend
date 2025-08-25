@@ -1,0 +1,3 @@
+
+INSERT INTO public."user"  ("id", "full_name" , "phone_number", "username", "hash", "email", "role", "alive" , "active", "created_at" , "created_by" , "updated_at" , "updated_by" ) 
+values ('0197a134-24e0-7989-8dc2-b6fb1755e246', 'Admin', '', 'admin', '$2a$12$4ORbByCTLOaoaF1Vig/Cb.5UsruSd8HKy1HQyknf2C.PRQ7lucvpq','super-admin@gmail.com','Admin', true, true, 1750756091950, 'vi', 1750756091950, 'vi')

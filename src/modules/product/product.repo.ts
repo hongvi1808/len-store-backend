@@ -9,12 +9,16 @@ import { forceToInfoPagition, genBaseSlug } from 'src/common/utils/func';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
 
+const defaultSelect = {
+  id: true, name: true, slug: true,
+  stock: true, price: true, description: true,
+}
 @Injectable()
 export class ProductRepo {
   constructor(private readonly db: PrismaService) { }
   async create(user: SessionUserModel, body: CreateProductDto) {
     const slug = await this.uniqueSlug(genBaseSlug(body.name))
-    const data: Prisma.ProductCreateInput = {
+    const data: Prisma.ProductUncheckedCreateInput = {
       id: uuidv7(),
       name: body.name,
       slug,
@@ -24,29 +28,52 @@ export class ProductRepo {
       createdAt: new Date().getTime(),
       createdBy: user.username,
       updatedAt: new Date().getTime(),
-      updatedBy: user.username
+      updatedBy: user.username,
+      productCategories: {
+        create: body.categoryIds?.map(i => ({
+          id: uuidv7(),
+          categoryId: i,
+          createdAt: new Date().getTime(),
+          createdBy: user.username,
+          updatedAt: new Date().getTime(),
+          updatedBy: user.username,
+        }))
+      }
     }
-    const res = await this.db.product.create({ data, select: { id: true, slug: true } })
+    const res = await this.db.product.create({ data, select: defaultSelect })
     return res;
   }
 
   async findList(filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt: Prisma.ProductWhereInput = { name: filters.search, alive: true, active: true }
+    const whereOpt: Prisma.ProductWhereInput = { alive: true, active: true }
     const items = await this.db.product.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
       skip, take,
-      select: { id: true, stock: true, slug: true, name: true, description: true, price: true }
+      select: {...defaultSelect, productCategories: {select: {categoryId: true}}}
     })
+    const result = items.map(i => ({... items, categoryIds: i.productCategories.map(j => j.categoryId)}))
     const total = await this.db.product.count({ where: whereOpt })
     return new PaginationItemModel(items, total, page, take)
+  }
+  async findListByCategory(categoryId: string, filters: FilterParams) {
+    const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
+    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, categoryId }
+    const items = await this.db.productCategory.findMany({
+      where: whereOpt,
+      orderBy: { updatedAt: 'desc' },
+      skip, take,
+      select: { id: true, product: { select: defaultSelect } }
+    })
+    const total = await this.db.productCategory.count({ where: whereOpt })
+    return new PaginationItemModel(items?.map(i => i.product), total, page, take)
   }
 
   async findOne(id: string) {
     const item = await this.db.product.findUnique({
       where: { id },
-      select: { id: true, stock: true, slug: true, name: true, description: true, price: true }
+      select: defaultSelect
     })
     return item
   }
@@ -59,9 +86,20 @@ export class ProductRepo {
       stock: body.stock,
       description: body.description,
       updatedAt: new Date().getTime(),
-      updatedBy: user.username
+      updatedBy: user.username,
+      productCategories: {
+        deleteMany: {},
+        create: body.categoryIds?.map(i => ({
+          id: uuidv7(),
+          categoryId: i,
+          createdAt: new Date().getTime(),
+          createdBy: user.username,
+          updatedAt: new Date().getTime(),
+          updatedBy: user.username,
+        }))
+      }
     }
-    const res = await this.db.product.update({ where: { id }, data, select: { id: true, slug: true } })
+    const res = await this.db.product.update({ where: { id }, data, select: defaultSelect })
     return res;
   }
 
@@ -71,7 +109,7 @@ export class ProductRepo {
       updatedBy: user.username,
       alive: false
     }
-    const res = await this.db.product.update({ where: { id }, data, select: { id: true, slug: true } })
+    const res = await this.db.product.update({ where: { id }, data, select: defaultSelect })
     return res;
   }
 
