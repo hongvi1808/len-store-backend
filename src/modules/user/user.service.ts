@@ -35,6 +35,9 @@ export class UserService {
   async findList(filers: FilterParams): Promise<PaginationItemModel<any | null>> {
     return this.userRepo.findList(filers)
   }
+  async findListCustomer(filers: FilterParams): Promise<PaginationItemModel<any | null>> {
+    return this.userRepo.findListCustomer(filers)
+  }
 
   async findOne(id: string) {
     return this.userRepo.findOne(id)

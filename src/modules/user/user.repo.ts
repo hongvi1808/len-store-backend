@@ -5,12 +5,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { forceToInfoPagition } from 'src/common/utils/func';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
 
 const defaultSelect = {
   id: true, phoneNumber: true, fullName: true,
-  email: true, role: true, username: true, birthDate: true
+  email: true, role: true, username: true,
 }
 
 @Injectable()
@@ -28,6 +28,18 @@ export class UserRepo {
   async findList(filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
     const whereOpt = {  alive: true, active: true }
+    const items = await this.db.user.findMany({
+      where: whereOpt,
+      orderBy: { updatedAt: 'desc' },
+      skip, take,
+      select: defaultSelect
+    })
+    const total = await this.db.user.count({ where: whereOpt })
+    return new PaginationItemModel(items, total, page, take)
+  }
+  async findListCustomer(filters: FilterParams) {
+    const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
+    const whereOpt = {  alive: true, active: true, role: UserRole.Customer }
     const items = await this.db.user.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },

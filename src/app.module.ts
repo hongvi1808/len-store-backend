@@ -36,9 +36,9 @@ import { RabbitModule } from './common/rabbitmq/rabbit.module';
       })
     }),
     AuthModule,
-    CacheModule.register({
-      isGlobal: true
-    }),
+    // CacheModule.register({
+    //   isGlobal: true
+    // }),
     PrismaModule,
     ProductModule,
     CategoryModule,
@@ -52,7 +52,7 @@ import { RabbitModule } from './common/rabbitmq/rabbit.module';
   controllers: [],
   providers: [
     { provide: APP_GUARD, useClass: AccessTokenAuthGuard },
-    { provide: APP_INTERCEPTOR, useClass: CacheInterceptor }
+    // { provide: APP_INTERCEPTOR, useClass: CacheInterceptor }
   ],
 })
 export class AppModule implements NestModule {

@@ -4,7 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { uuidv7 } from 'uuidv7';
 import { SessionUserModel } from 'src/common/models/session-user.model';
-import { Prisma } from '@prisma/client';
+import { CategoryTags, Prisma } from '@prisma/client';
 import { forceToInfoPagition, genBaseSlug } from 'src/common/utils/func';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
@@ -29,6 +29,18 @@ export class CategoryRepo {
     return res;
   }
 
+  async findAllByTag(tag: CategoryTags) {
+    const { skip, take, page } = forceToInfoPagition(0, 50)
+    const whereOpt: Prisma.CategoryWhereInput = { alive: true, active: true, tag }
+    const items = await this.db.category.findMany({
+      where: whereOpt,
+      orderBy: { updatedAt: 'desc' },
+      skip, take,
+      select: defaultSelect
+    })
+    const total = await this.db.category.count({ where: whereOpt })
+    return new PaginationItemModel(items, total, page, take)
+  }
   async findList(filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
     const whereOpt: Prisma.CategoryWhereInput = { alive: true, active: true }

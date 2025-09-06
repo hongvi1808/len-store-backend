@@ -6,6 +6,7 @@ import { SessionUserModel } from 'src/common/models/session-user.model';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { ProductRes } from './entities/product.entity';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { CategoryTags } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -20,7 +21,16 @@ export class ProductService {
   async findListByCategory(categoryId: string, filers: FilterParams): Promise<PaginationItemModel<ProductRes | null>> {
     return this.productRepo.findListByCategory(categoryId, filers)
   }
+  async findListBySlugCategory(slug: string, filers: FilterParams): Promise<PaginationItemModel<ProductRes | null>> {
+    return this.productRepo.findListBySlugCategory(slug, filers)
+  }
+  async findListByTag(tag: CategoryTags, filers: FilterParams): Promise<PaginationItemModel<ProductRes | null>> {
+    return this.productRepo.findListByTag(tag, filers)
+  }
 
+  async findBySlug(slug: string): Promise<ProductRes | null> {
+    return this.productRepo.findBySlug(slug)
+  }
   async findOne(id: string): Promise<ProductRes | null> {
     return this.productRepo.findOne(id)
   }

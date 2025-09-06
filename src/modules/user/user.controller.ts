@@ -8,14 +8,18 @@ import { FilterParams } from 'src/common/models/filter-params.model';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('/')
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
+  @Get('/')
   async findAll(@Query() filter: FilterParams) {
     return this.userService.findList(filter);
+  }
+  @Get('/customer')
+  async findAllCustomer(@Query() filter: FilterParams) {
+    return this.userService.findListCustomer(filter);
   }
 
   @Get(':id')

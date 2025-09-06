@@ -4,13 +4,14 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { uuidv7 } from 'uuidv7';
 import { SessionUserModel } from 'src/common/models/session-user.model';
-import { Prisma } from '@prisma/client';
+import { CategoryTags, Prisma } from '@prisma/client';
 import { forceToInfoPagition, genBaseSlug } from 'src/common/utils/func';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { ProductRes } from './entities/product.entity';
 
 const defaultSelect = {
-  id: true, name: true, slug: true,
+  id: true, name: true, slug: true, images: true, classify: true,
   stock: true, price: true, description: true,
 }
 @Injectable()
@@ -23,6 +24,7 @@ export class ProductRepo {
       name: body.name,
       slug,
       stock: body.stock,
+      images: body.images,
       price: body.price,
       description: body.description,
       createdAt: new Date().getTime(),
@@ -40,7 +42,7 @@ export class ProductRepo {
         }))
       }
     }
-    const res = await this.db.product.create({ data, select: defaultSelect })
+    const res = await this.db.product.create({ data, select: { ...defaultSelect, productCategories: { select: { categoryId: true } } } })
     return res;
   }
 
@@ -51,11 +53,21 @@ export class ProductRepo {
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
       skip, take,
-      select: {...defaultSelect, productCategories: {select: {categoryId: true}}}
+      select: { ...defaultSelect, productCategories: { select: { categoryId: true } } }
     })
-    const result = items.map(i => ({... items, categoryIds: i.productCategories.map(j => j.categoryId)}))
     const total = await this.db.product.count({ where: whereOpt })
-    return new PaginationItemModel(items, total, page, take)
+    const res: ProductRes[] = items.map(i => ({
+      id: i.id,
+      stock: i.stock,
+      slug: i.slug,
+      name: i.name,
+      images: i.images,
+      price: i.price,
+      description: i.description,
+      classify: i.classify,
+      categoryIds: i.productCategories.map(j => j.categoryId)
+    }))
+    return new PaginationItemModel(res, total, page, take)
   }
   async findListByCategory(categoryId: string, filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
@@ -67,15 +79,100 @@ export class ProductRepo {
       select: { id: true, product: { select: defaultSelect } }
     })
     const total = await this.db.productCategory.count({ where: whereOpt })
-    return new PaginationItemModel(items?.map(i => i.product), total, page, take)
+    const res: ProductRes[] = items?.map(i => i.product).map(i => ({
+      id: i.id,
+      stock: i.stock,
+      slug: i.slug,
+      name: i.name,
+      images: i.images,
+      price: i.price,
+      classify: i.classify,
+
+      description: i.description,
+    }))
+    return new PaginationItemModel(res, total, page, take)
+  }
+  async findListBySlugCategory(slug: string, filters: FilterParams) {
+    const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
+    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, category: { slug } }
+    const items = await this.db.productCategory.findMany({
+      where: whereOpt,
+      orderBy: { updatedAt: 'desc' },
+      skip, take,
+      select: { id: true, product: { select: defaultSelect } }
+    })
+    const total = await this.db.productCategory.count({ where: whereOpt })
+    const res: ProductRes[] = items?.map(i => i.product).map(i => ({
+      id: i.id,
+      stock: i.stock,
+      slug: i.slug,
+      name: i.name,
+      images: i.images,
+      price: i.price, classify: i.classify,
+
+      description: i.description,
+    }))
+    return new PaginationItemModel(res, total, page, take)
+  }
+  async findListByTag(tag: CategoryTags, filters: FilterParams) {
+    const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
+    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, category: { tag } }
+    const items = await this.db.productCategory.findMany({
+      where: whereOpt,
+      orderBy: { updatedAt: 'desc' },
+      skip, take,
+      select: { id: true, product: { select: defaultSelect } }
+    })
+    const total = await this.db.productCategory.count({ where: whereOpt })
+    const res: ProductRes[] = items?.map(i => i.product).map(i => ({
+      id: i.id,
+      stock: i.stock,
+      slug: i.slug,
+      name: i.name,
+      images: i.images, classify: i.classify,
+
+      price: i.price,
+      description: i.description,
+    }))
+    return new PaginationItemModel(res, total, page, take)
   }
 
+  async findBySlug(slug: string) {
+    const item = await this.db.product.findFirst({
+      where: { slug },
+      select: defaultSelect
+    })
+    if (!item) return null
+    const res: ProductRes = {
+      id: item.id,
+      stock: item.stock,
+      slug: item.slug,
+      images: item.images,
+      name: item.name, classify: item.classify,
+
+      price: item.price,
+      description: item.description,
+    }
+    return res
+  }
   async findOne(id: string) {
     const item = await this.db.product.findUnique({
       where: { id },
-      select: defaultSelect
+      select: { ...defaultSelect, productCategories: { select: { categoryId: true } } }
     })
-    return item
+    if (!item) return null
+    const res: ProductRes = {
+      id: item.id,
+      stock: item.stock,
+      slug: item.slug,
+      images: item.images,
+      name: item.name,
+      price: item.price, classify: item.classify,
+
+      description: item.description,
+      categoryIds: item.productCategories.map(j => j.categoryId)
+    }
+    return res
   }
 
   async update(id: string, user: SessionUserModel, body: UpdateProductDto) {
@@ -84,6 +181,7 @@ export class ProductRepo {
       name: body.name,
       slug,
       stock: body.stock,
+
       description: body.description,
       updatedAt: new Date().getTime(),
       updatedBy: user.username,
@@ -99,7 +197,7 @@ export class ProductRepo {
         }))
       }
     }
-    const res = await this.db.product.update({ where: { id }, data, select: defaultSelect })
+    const res = await this.db.product.update({ where: { id }, data, select: { ...defaultSelect, productCategories: { select: { categoryId: true } } } })
     return res;
   }
 

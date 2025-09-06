@@ -5,11 +5,17 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { SessionUser } from 'src/configs/decorators/session-user.decorator';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { FilterParams } from 'src/common/models/filter-params.model';
+import { CategoryTags } from '@prisma/client';
+import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
-
+  @NoGlobalAuth()
+  @Get('/tag/:tag')
+  findAllByTags(@Param('tag') tag: CategoryTags) {
+    return this.categoryService.findAllByTag(tag);
+  }
   @Post('/')
   create(@SessionUser() user: SessionUserModel, @Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(user,createCategoryDto);

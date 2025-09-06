@@ -18,7 +18,7 @@ export class CreateOrderDto {
 }
 
 class ProductInOrderItem {
-  id: string;
+  productId: string;
   price: number;
   name: string;
   quantity: number}

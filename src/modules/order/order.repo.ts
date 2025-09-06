@@ -19,6 +19,7 @@ export class OrderRepo {
       id: uuidv7(),
       code: generateOrderCode(orderNumber),
       totalPrice: body.totalPrice,
+      customerId: body.customerId || undefined,
       createdAt: new Date().getTime(),
       createdBy: user.username,
       updatedAt: new Date().getTime(),
@@ -32,7 +33,7 @@ export class OrderRepo {
       data: body.products.map((product): Prisma.OrderItemCreateManyInput => ({
         id: uuidv7(),
         orderId: res.id,
-        productId: product.id,
+        productId: product.productId,
         name: product.name,
         price: product.price,
         quantity: product.quantity,

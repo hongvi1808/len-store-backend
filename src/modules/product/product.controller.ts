@@ -5,10 +5,28 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { SessionUser } from 'src/configs/decorators/session-user.decorator';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { FilterParams } from 'src/common/models/filter-params.model';
+import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
+import { CategoryTags } from '@prisma/client';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
+  @NoGlobalAuth()
+  @Get('/category/slug/:slug')
+  findAllBySlugCategory(@Param('slug') slug: string, @Query() filter: FilterParams) {
+    return this.productService.findListBySlugCategory(slug, filter);
+  }
+  @NoGlobalAuth()
+  @Get('/tag/:tag')
+  findAllByTag(@Param('tag') tag: CategoryTags, @Query() filter: FilterParams) {
+    return this.productService.findListByTag(tag, filter);
+  }
+  @NoGlobalAuth()
+  @Get('/slug/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.productService.findBySlug(slug);
+  }
+
 
   @Post('/')
   create(@SessionUser() user: SessionUserModel, @Body() createProductDto: CreateProductDto) {
@@ -20,10 +38,9 @@ export class ProductController {
     return this.productService.findList(filter);
   }
   @Get('/category/:id')
-  findAllByCategory(@Param('id') categoryId: string,@Query() filter: FilterParams) {
+  findAllByCategory(@Param('id') categoryId: string, @Query() filter: FilterParams) {
     return this.productService.findListByCategory(categoryId, filter);
   }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(id);

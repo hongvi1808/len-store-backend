@@ -6,10 +6,14 @@ import { SessionUserModel } from 'src/common/models/session-user.model';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { CategoryRes } from './entities/category.entity';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { CategoryTags } from '@prisma/client';
 
 @Injectable()
 export class CategoryService {
   constructor(private readonly categoryRepo: CategoryRepo) { }
+  async findAllByTag(tag: CategoryTags): Promise<PaginationItemModel<CategoryRes | null>> {
+    return this.categoryRepo.findAllByTag(tag)
+  }
   async create(user: SessionUserModel, body: CreateCategoryDto) {
     return this.categoryRepo.create(user, body)
   }

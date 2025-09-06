@@ -8,6 +8,8 @@ export class CreateProductDto {
 
   @IsArray()
   categoryIds: string[]
+  @IsArray()
+  images: string[]
 
   @Type(() => Number)
   @IsInt()
