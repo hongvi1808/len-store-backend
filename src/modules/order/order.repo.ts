@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CustomerCreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { PrismaService } from 'src/common/prisma/prisma.service';
@@ -8,12 +8,13 @@ import { uuidv4, uuidv7 } from 'uuidv7';
 import { forceToInfoPagition, generateOrderCode } from 'src/common/utils/func';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { OrderCreate } from './entities/order.entity';
 
 const defaultSelect = { id: true, customerId: true, code: true, createdAt: true, totalPrice: true, status: true }
 @Injectable()
 export class OrderRepo {
   constructor(private readonly db: PrismaService) { }
-  async create(user: SessionUserModel, body: CreateOrderDto) {
+  async create(user: SessionUserModel, body: OrderCreate) {
     const orderNumber = await this.getOrderNumber();
     const data: Prisma.OrderUncheckedCreateInput = {
       id: uuidv7(),
@@ -24,6 +25,8 @@ export class OrderRepo {
       createdBy: user.username,
       updatedAt: new Date().getTime(),
       updatedBy: user.username,
+      note: body.note,
+      customerInfo: body.customerInfo,
       orderNumber,
     }
     const res = await this.db.order.create({
@@ -33,7 +36,7 @@ export class OrderRepo {
       data: body.products.map((product): Prisma.OrderItemCreateManyInput => ({
         id: uuidv7(),
         orderId: res.id,
-        productId: product.productId,
+        productId: product.id,
         name: product.name,
         price: product.price,
         quantity: product.quantity,

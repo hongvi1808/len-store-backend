@@ -3,4 +3,5 @@ export type AuthResponse = {
     expiredAt: number;
     refreshToken?: string;
     userId: string;
+    role: string
 }

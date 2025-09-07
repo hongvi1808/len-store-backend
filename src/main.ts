@@ -12,6 +12,7 @@ import { TrimPipe } from './configs/pipes/trim.pipe';
 import { ResponseFormatInterceptor } from './configs/interceptions/response-format.interceptor';
 import { QUEUES } from './common/rabbitmq/rabbit.contant';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { BigIntInterceptor } from './configs/interceptions/bigint-format.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,7 +35,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new GlobalValidationPipe(), new TrimPipe())
 
-  app.useGlobalInterceptors(new ResponseFormatInterceptor())
+  app.useGlobalInterceptors(new ResponseFormatInterceptor(), new BigIntInterceptor())
 
   // app.useGlobalGuards(new AccessTokenAuthGuard(app.get(Reflector)))
 

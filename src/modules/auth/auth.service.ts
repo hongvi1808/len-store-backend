@@ -46,7 +46,7 @@ export class AuthService {
         const { accessToken, expiredAt } = await this.generateAccessToken(jwtObject);
         const refreshToken = await this.generateRefreshToken(jwtObject);
 
-        return { accessToken, refreshToken, expiredAt, userId: createUser.id }
+        return { accessToken, refreshToken, expiredAt, userId: createUser.id, role: createUser.role  }
     }
 
     async logIn(body: LoginAuthDto): Promise<AuthResponse> {
@@ -67,13 +67,13 @@ export class AuthService {
         const { accessToken, expiredAt } = await this.generateAccessToken(jwtObject);
         const refreshToken = await this.generateRefreshToken(jwtObject);
 
-        return { accessToken, refreshToken, expiredAt, userId: userFound.id }
+        return { accessToken, refreshToken, expiredAt, userId: userFound.id, role: userFound.role }
     }
 
     async refreshToken(sUser: SessionUserModel): Promise<AuthResponse> {
         const payload: SessionUserModel = {role: sUser.role, userId: sUser.userId, username: sUser.username, sid: uuidv7()}
         const { accessToken, expiredAt } = await this.generateAccessToken(payload);
-        return { accessToken, expiredAt, userId: sUser.userId }
+        return { accessToken, expiredAt, userId: sUser.userId, role: sUser.role }
     }
     async logout(sUser: SessionUserModel) {
     await this.addSidToBlacklist(sUser.sid)
@@ -116,7 +116,7 @@ export class AuthService {
         const { accessToken, expiredAt } = await this.generateAccessToken(jwtObject);
         const refreshToken = await this.generateRefreshToken(jwtObject);
 
-        return { accessToken, refreshToken, expiredAt, userId: user.id }
+        return { accessToken, refreshToken, expiredAt, userId: user.id, role: user.role }
     }
      private async generateAccessToken(payload: SessionUserModel): Promise<{ accessToken: string, expiredAt: number }> {
         const accessToken = await this.jwtService.signAsync(payload, {

@@ -175,19 +175,21 @@ model CartItem {
 }
 
 model Order {
-  id          String      @id
-  code        String
-  customerId  String?     @map("customer_id")
-  totalPrice  Float       @default(0) @map("total_price")
-  status      OrderStatus @default(Pending)
-  orderNumber Int         @map("order_number")
-  orderItems  OrderItem[]
-  active      Boolean     @default(true)
-  createdAt   BigInt      @map("created_at")
-  createdBy   String      @map("created_by")
-  updatedAt   BigInt      @map("updated_at")
-  updatedBy   String      @map("updated_by")
-  payments    Payment[]
+  id           String      @id
+  code         String
+  customerId   String?     @map("customer_id")
+  customerInfo Json?       @default("{}") @map("customer_info")
+  totalPrice   Float       @default(0) @map("total_price")
+  status       OrderStatus @default(Pending)
+  orderNumber  Int         @map("order_number")
+  orderItems   OrderItem[]
+  note         String?
+  active       Boolean     @default(true)
+  createdAt    BigInt      @map("created_at")
+  createdBy    String      @map("created_by")
+  updatedAt    BigInt      @map("updated_at")
+  updatedBy    String      @map("updated_by")
+  payments     Payment[]
 
   @@unique([id, code])
   @@map("order")

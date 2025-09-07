@@ -1,24 +1,95 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsOptional, IsString } from "class-validator";
+import { PaymentMethod } from "@prisma/client";
+import { Type } from "class-transformer";
+import { IsArray, IsInt, IsOptional, IsString } from "class-validator";
+import { PhoneNumber } from "src/configs/decorators/phone-number.decorator";
 
-export class CreateOrderDto {
-    @IsOptional()
-    @IsString()
-    customerId: string  | null;
+export class CustomerCreateOrderDto {
+  @IsOptional()
+  @IsString()
+  customerId: string | null;
+  @IsOptional()
+  @IsString()
+  name: string | null;
 
-    @ApiProperty({
-      type: `number`,
-      format: `float`,
-    })
-    @IsString()
-    totalPrice: number ;
+  @IsOptional()
+  @PhoneNumber()
+  phoneNumber: string | null;
 
-    @IsArray()
-    products: ProductInOrderItem[]
+  @IsOptional()
+  @IsString()
+  email: string | null;
+
+  @IsOptional()
+  @IsString()
+  address: string | null;
+  
+  @IsOptional()
+  note: string | null;
+
+  @IsString()
+  paymentMethod: PaymentMethod
+
+  @ApiProperty({
+    type: `number`,
+    format: `float`,
+  })
+  @Type(() => Number)
+  @IsInt()
+  totalPrice: number;
+
+  @IsArray()
+  products: ProductInOrderItem[]
 }
 
+// export class CustomerCreateOrderDto {
+//   @IsOptional()
+//   @IsString()
+//   name: string | null;
+
+//   @IsOptional()
+//   @PhoneNumber()
+//   phoneNumber: string | null;
+
+//   @IsOptional()
+//   @IsString()
+//   email: string | null;
+
+//   @IsOptional()
+//   @IsString()
+//   address: string | null;
+  
+//   @IsOptional()
+//   note: string | null;
+
+//   @IsString()
+//   paymentMethod: PaymentMethod
+
+//   @ApiProperty({
+//     type: `number`,
+//     format: `float`,
+//   })
+//   @Type(() => Number)
+//   @IsInt()
+//   totalPrice: number;
+
+//   @IsArray()
+//   products: ProductInOrderItem[]
+// }
+
+
 class ProductInOrderItem {
-  productId: string;
+  @IsString()
+  id: string;
+
+  @Type(() => Number)
+  @IsInt()
   price: number;
+  
+  @IsString()
   name: string;
-  quantity: number}
+
+  @Type(() => Number)
+  @IsInt()
+  quantity: number
+}

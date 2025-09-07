@@ -27,7 +27,7 @@ export class CartController {
  
    @Put(':id')
    update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() updateCategoryDto: UpdateCartDto) {
-     return this.cartService.update(id,user, updateCategoryDto);
+     return this.cartService.update(id,user,updateCategoryDto);
    }
  
    @Delete(':id')

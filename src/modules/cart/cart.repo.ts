@@ -27,7 +27,7 @@ export class CartItemRepo {
     const data: Prisma.CartItemUncheckedCreateInput = {
       id: uuidv7(),
       productId: body.productId,
-      customerId: body.customerId,
+      customerId: user.userId,
       quantity: body.quantity,
       createdAt: new Date().getTime(),
       createdBy: user.username,
@@ -86,7 +86,7 @@ export class CartItemRepo {
   async update(id: string, user: SessionUserModel, body: UpdateCartDto) {
     if (body.quantity === 0) return this.remove(id, user)
     const data: Prisma.CartItemUncheckedUpdateInput = {
-      productId: body.productId || undefined,
+      classify: body.classify || undefined,
       quantity: body.quantity || undefined,
       updatedAt: new Date().getTime(),
       updatedBy: user.username
