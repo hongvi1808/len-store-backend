@@ -48,7 +48,19 @@ export class AuthController {
             sameSite: 'strict', // Adjust as necessary
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
-        return result;
+        res.clearCookie(SYSTEM_KEY.AccessTokenCookieKey, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+            sameSite: 'strict', // Adjust as necessary
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+        res.clearCookie(SYSTEM_KEY.RoleCookieKey, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+            sameSite: 'strict', // Adjust as necessary
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+        return true;
     }
   
   @NoGlobalAuth()

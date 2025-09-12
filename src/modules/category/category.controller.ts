@@ -21,6 +21,7 @@ export class CategoryController {
     return this.categoryService.create(user,createCategoryDto);
   }
 
+  @NoGlobalAuth()
   @Get('/')
   findAll(@Query() filter: FilterParams) {
     return this.categoryService.findList(filter);
