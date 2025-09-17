@@ -11,10 +11,10 @@ import { PaginationItemModel } from 'src/common/models/res-success.model';
 import { CartItemRes } from './entities/cart.entity';
 
 const defaultSelect = {
-  id: true,
+  id: true, classify: true,
   product: {
     select: {
-      id: true, slug: true, name: true, price: true
+      id: true, slug: true, name: true, price: true, images: true, stock: true,
     }
   },
   quantity: true
@@ -41,11 +41,28 @@ export class CartItemRepo {
     })
     return res
   }
+  async createMany(user: SessionUserModel, body: CreateCartDto[]) {
+    const data: Prisma.CartItemUncheckedCreateInput[] = body.map(i => ({
+      id: uuidv7(),
+      productId: i.productId,
+      customerId: user.userId,
+      quantity: i.quantity,
+      createdAt: new Date().getTime(),
+      createdBy: user.username,
+      updatedAt: new Date().getTime(),
+      updatedBy: user.username
+
+    })) 
+    const res = await this.db.cartItem.createMany({
+      data,
+    })
+    return res
+  }
 
 
-  async findList(filters: FilterParams): Promise<PaginationItemModel<CartItemRes | null>> {
+  async findListByCustomer(customerId: string, filters: FilterParams): Promise<PaginationItemModel<CartItemRes | null>> {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt: Prisma.CartItemWhereInput = { quantity: { gt: 1 }, alive: true }
+    const whereOpt: Prisma.CartItemWhereInput = { alive: true, customerId  }
     const items = await this.db.cartItem.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
@@ -53,15 +70,12 @@ export class CartItemRepo {
       select: defaultSelect
     })
     const total = await this.db.cartItem.count({ where: whereOpt })
-    const res: CartItemRes[] = items.map(i => ({
-      id: i.id,
-      productId: i.product.id,
-      productName: i.product.name,
-      productPrice: i.product.price,
-      quantity: i.quantity,
-      slug: i.product.slug
-    }))
-    return new PaginationItemModel(res, total, page, take)
+    return new PaginationItemModel(items, total, page, take)
+  }
+  async getCountByCustomer(customerId: string, ): Promise<number> {
+    const whereOpt: Prisma.CartItemWhereInput = { alive: true, customerId  }
+    const total = await this.db.cartItem.count({ where: whereOpt })
+    return total
   }
 
   async findOne(id: string): Promise<CartItemRes | null> {
@@ -70,15 +84,17 @@ export class CartItemRepo {
       select: defaultSelect
     })
     if (item) {
-      const res: CartItemRes = {
-        id: item.id,
-        productId: item.product.id,
-        productName: item.product.name,
-        productPrice: item.product.price,
-        quantity: item.quantity,
-        slug: item.product.slug
-      }
-      return res
+      return item
+    }
+    return null
+  }
+  async findOneByProduct(id: string): Promise<CartItemRes | null> {
+    const item = await this.db.cartItem.findFirst({
+      where: { productId: id },
+      select: defaultSelect
+    })
+    if (item) {
+      return item
     }
     return null
   }

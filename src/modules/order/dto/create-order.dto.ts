@@ -42,41 +42,6 @@ export class CustomerCreateOrderDto {
   products: ProductInOrderItem[]
 }
 
-// export class CustomerCreateOrderDto {
-//   @IsOptional()
-//   @IsString()
-//   name: string | null;
-
-//   @IsOptional()
-//   @PhoneNumber()
-//   phoneNumber: string | null;
-
-//   @IsOptional()
-//   @IsString()
-//   email: string | null;
-
-//   @IsOptional()
-//   @IsString()
-//   address: string | null;
-  
-//   @IsOptional()
-//   note: string | null;
-
-//   @IsString()
-//   paymentMethod: PaymentMethod
-
-//   @ApiProperty({
-//     type: `number`,
-//     format: `float`,
-//   })
-//   @Type(() => Number)
-//   @IsInt()
-//   totalPrice: number;
-
-//   @IsArray()
-//   products: ProductInOrderItem[]
-// }
-
 
 class ProductInOrderItem {
   @IsString()

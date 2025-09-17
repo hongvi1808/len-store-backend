@@ -6,20 +6,21 @@ import { FilterParams } from 'src/common/models/filter-params.model';
 import { PaginationItemModel } from 'src/common/models/res-success.model';
 import { OrderCreate, OrderItemsRes, OrderRes } from './entities/order.entity';
 import { OrderStatus, UserRole } from '@prisma/client';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrderService {
   constructor(private readonly orderRep: OrderRepo) { }
-  async customerOrder(user: SessionUserModel, body: CustomerCreateOrderDto) {
-    const userOrder: SessionUserModel = user?.sid ? user : {
-      role: UserRole.Customer,
-      sid: '',
-      userId: '',
-      username: body.phoneNumber || ''
-    }
+  async customerOrder(body: CustomerCreateOrderDto) {
+    // const userOrder: SessionUserModel = user?.sid ? user : {
+    //   role: UserRole.Customer,
+    //   sid: '',
+    //   userId: '',
+    //   username: body.phoneNumber || ''
+    // }
 
     const data: OrderCreate = {
-      customerId: user?.userId || '',
+      customerId: body?.customerId || '',
       paymentMethod: body.paymentMethod,
       customerInfo:
       {
@@ -31,7 +32,7 @@ export class OrderService {
       products: body.products,
       totalPrice: body.totalPrice
     }
-    const result = await this.orderRep.create(userOrder, data)
+    const result = await this.orderRep.create(data)
     return result
   }
   async create(user: SessionUserModel, body: CustomerCreateOrderDto) {
@@ -48,11 +49,14 @@ export class OrderService {
       products: body.products,
       totalPrice: body.totalPrice
     }
-    return this.orderRep.create(user, data)
+    return this.orderRep.create( data, user)
   }
 
-  async findList(filers: FilterParams): Promise<PaginationItemModel<OrderRes | null>> {
+  async findList( filers: FilterParams): Promise<PaginationItemModel<any>> {
     return this.orderRep.findList(filers)
+  }
+  async findListByCustomer(user: SessionUserModel, filers: FilterParams): Promise<PaginationItemModel<OrderRes | null>> {
+    return this.orderRep.findListByCustomer(user, filers)
   }
   async findOrderItemsByOrder(orderId: string): Promise<PaginationItemModel<OrderItemsRes | null>> {
     return this.orderRep.findOrderItemsByOrder(orderId)
@@ -64,6 +68,9 @@ export class OrderService {
 
   async updateStatus(id: string, user: SessionUserModel, status: OrderStatus) {
     return this.orderRep.updateStatus(id, user, status)
+  }
+  async update(id: string, user: SessionUserModel, data: UpdateOrderDto) {
+    return this.orderRep.update(id, user, data)
   }
 
 }

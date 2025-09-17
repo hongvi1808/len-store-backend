@@ -11,13 +11,21 @@ export class CartController {
   constructor(private readonly cartService: CartItemService) {}
 
    @Post()
-   create(@SessionUser() user: SessionUserModel, @Body() createCategoryDto: CreateCartDto) {
-     return this.cartService.create(user,createCategoryDto);
+   create(@SessionUser() user: SessionUserModel, @Body() body: CreateCartDto) {
+     return this.cartService.create(user,body);
+   }
+   @Post('sync-cart')
+   syncCart(@SessionUser() user: SessionUserModel, @Body() body: CreateCartDto[]) {
+     return this.cartService.createMany(user,body);
    }
  
-   @Get()
-   findAll(@Query() filter: FilterParams) {
-     return this.cartService.findList(filter);
+   @Get('/')
+   findAllByCustomer(@Query() filter: FilterParams, @SessionUser() user: SessionUserModel,) {
+     return this.cartService.findListByCustomer(user, filter);
+   }
+   @Get('/count')
+   getCountByCustomer(@SessionUser() user: SessionUserModel) {
+     return this.cartService.getCountByCustomer(user.userId);
    }
  
    @Get(':id')
@@ -26,8 +34,8 @@ export class CartController {
    }
  
    @Put(':id')
-   update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() updateCategoryDto: UpdateCartDto) {
-     return this.cartService.update(id,user,updateCategoryDto);
+   update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() body: UpdateCartDto) {
+     return this.cartService.update(id,user,body);
    }
  
    @Delete(':id')

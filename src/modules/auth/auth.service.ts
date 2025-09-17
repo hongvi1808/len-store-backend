@@ -25,16 +25,15 @@ export class AuthService {
          private readonly redisClient: RedisService,
     ) { }
     async register(body: RegisterAuthDto): Promise<AuthResponse> {
-        if (!body.phoneNumber && !body.email) 
-            throw new CustomExceptionFilter('REQUIRED_PHONE_OR_EMAIL', 'Phone or email is required')
-        const userFound = await this.userService.findByUsername(body.phoneNumber || body.email || '' )
+        // if (!body.phoneNumber && !body.email) 
+        //     throw new CustomExceptionFilter('REQUIRED_PHONE_OR_EMAIL', 'Phone or email is required')
+        // const userFound = await this.userService.findByUsername(body.phoneNumber || body.email || '' )
+        const userFound = await this.userService.findByUsername(body.phoneNumber )
         if (userFound) throw new CustomExceptionFilter('EXISTED_USER', 'This user existed')
         const createUser = await this.userService.create({
             fullName: body.fullName,
             phoneNumber: body.phoneNumber,
-            email: body.email,
-            birthDate: body.birthDate,
-            role: body.role || UserRole.Customer,
+            role: UserRole.Customer,
         }, body.password);
 
         const jwtObject: SessionUserModel = {
@@ -50,7 +49,8 @@ export class AuthService {
     }
 
     async logIn(body: LoginAuthDto): Promise<AuthResponse> {
-        const userFound = await this.userService.findByUsername(body.username)
+        if (!body.username && !body.phoneNumber)  throw new CustomExceptionFilter('REQUIRE_FIELD', 'username or phoneNumber is require')
+        const userFound = await this.userService.findByUsername(body.phoneNumber || body.username)
         if (!userFound) throw new CustomExceptionFilter('NOT_FOUND_USER', 'This user is not existed')
             const validPass = await bcrypt.compare(
             body.password,
@@ -88,10 +88,11 @@ export class AuthService {
   }
     async deniedPermission(request: {role: UserRole, url: string}): Promise<boolean> {
         if ( request.role === UserRole.Admin) return false
-        const result = await this.permissionService.getPersByRoledAndUrl(request.role, request.url);
+        // const result = await this.permissionService.getPersByRoledAndUrl(request.role, request.url);
 
-        if (result) false
-        return true
+        // if (result) false
+        // return true
+        return false
     }
     async googleCallback(body: UserDataCallback): Promise<AuthResponse> {
         let user: any;

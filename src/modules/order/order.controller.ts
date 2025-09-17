@@ -7,6 +7,7 @@ import { FilterParams } from 'src/common/models/filter-params.model';
 import { OrderStatus } from '@prisma/client';
 import { RabbitService } from 'src/common/rabbitmq/rabbit.service';
 import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('order')
 export class OrderController {
@@ -16,7 +17,7 @@ export class OrderController {
   @NoGlobalAuth()
   @Post('/customer')
   async customerOrder(@SessionUser() user: SessionUserModel, @Body() createOrderDto: CustomerCreateOrderDto) {
-    const order = await this.orderService.customerOrder(user, createOrderDto);
+    const order = await this.orderService.customerOrder(createOrderDto);
     if (order && createOrderDto.email) {
       this.mailClient.sendMailCreatedOrder(order);
     }
@@ -32,20 +33,32 @@ export class OrderController {
   }
 
   @Get()
-  findAll(@Query() filter: FilterParams) {
-    return this.orderService.findList(filter);
+  findAll(@Query() filter: FilterParams, ) {
+    return this.orderService.findList( filter);
+  }
+  @Get('/customer')
+  findListByCustomer(@Query() filter: FilterParams, @SessionUser() user: SessionUserModel) {
+    return this.orderService.findListByCustomer(user, filter);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);
   }
-  @Get('/orderItems/:orderId')
-  findOrderItemsByOrder(@Param('orderId') orderId: string) {
+  @Get('/:orderId/products')
+  findOrderItemsByOrder(@Param('orderId') orderId: string,) {
     return this.orderService.findOrderItemsByOrder(orderId);
   }
 
-  @Put('/cancel/:id')
+  @Put('/:id/cancel')
   cancel(@Param('id') id: string, @SessionUser() user: SessionUserModel) {
     return this.orderService.updateStatus(id, user, OrderStatus.Cancelled);
+  }
+  @Put('/:id')
+  update(@Param('id') id: string, @Body() data: UpdateOrderDto, @SessionUser() user: SessionUserModel) {
+    return this.orderService.update(id, user, data);
+  }
+  @Put('/:id/status')
+  updateStatus(@Param('id') id: string, @Body() status: OrderStatus, @SessionUser() user: SessionUserModel) {
+    return this.orderService.updateStatus(id, user, status);
   }
 }

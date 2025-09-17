@@ -2,18 +2,21 @@ import { PaymentMethod } from "@prisma/client";
 
 export class OrderRes {
      id: string;
-     customerId?: string | null;
      code: string;
-     createdAt: bigint;
-     totalPrice: number
+     createdAt?: bigint;
+     customerId?: string | null;
+     totalPrice: number;
      status: string
+     orderItems: OrderItemsRes[]
 }
 export class OrderItemsRes {
      id: string;
-     orderId: string;
+     orderId?: string;
      prodcutId?: string | null;
      name: string;
+     product: {images: any | null}
      price: number;
+     classify: any;
      quantity: number
 }
 export class OrderCreate {
@@ -21,6 +24,6 @@ export class OrderCreate {
      totalPrice: number;
      paymentMethod: PaymentMethod;
      note?: string;
-     customerInfo?: {name: string, phoneNumber: string, email?: string, address: string}
-     products: { id: string, price: number, name: string, quantity: number }[]
+     customerInfo?: { name: string, phoneNumber: string, email?: string, address: string }
+     products: { id: string, price: number, name: string, quantity: number, classify?: any }[]
 }

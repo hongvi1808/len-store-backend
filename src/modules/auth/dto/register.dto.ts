@@ -4,19 +4,19 @@ import { PhoneNumber } from "src/configs/decorators/phone-number.decorator";
 
 export class RegisterAuthDto {
   @PhoneNumber()
-  phoneNumber?: string;
+  phoneNumber: string;
 
   @IsString()
   password: string;
 
-  @IsString()
-  email?: string;
+  // @IsString()
+  // email?: string;
 
   @IsString()
   fullName: string;
 
-  @IsNumber()
-  birthDate: number;
-  @IsString()
-  role?: UserRole;
+  // @IsNumber()
+  // birthDate: number;
+  // @IsString()
+  // role?: UserRole;
 }

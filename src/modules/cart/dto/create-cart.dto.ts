@@ -14,6 +14,9 @@ export class CreateCartDto {
     @IsString()
     productId: string
 
+    @IsString()
+    customerId: string
+
     @IsOptional()
     classify: any
 

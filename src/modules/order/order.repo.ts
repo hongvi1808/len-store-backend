@@ -14,7 +14,7 @@ const defaultSelect = { id: true, customerId: true, code: true, createdAt: true,
 @Injectable()
 export class OrderRepo {
   constructor(private readonly db: PrismaService) { }
-  async create(user: SessionUserModel, body: OrderCreate) {
+  async create(body: OrderCreate, user?: SessionUserModel) {
     const orderNumber = await this.getOrderNumber();
     const data: Prisma.OrderUncheckedCreateInput = {
       id: uuidv7(),
@@ -22,9 +22,9 @@ export class OrderRepo {
       totalPrice: body.totalPrice,
       customerId: body.customerId || undefined,
       createdAt: new Date().getTime(),
-      createdBy: user.username,
+      createdBy: user?.username || body.customerId || body.customerInfo?.phoneNumber || '',
       updatedAt: new Date().getTime(),
-      updatedBy: user.username,
+      updatedBy: user?.username || body.customerId || body.customerInfo?.phoneNumber || '',
       note: body.note,
       customerInfo: body.customerInfo,
       orderNumber,
@@ -41,9 +41,9 @@ export class OrderRepo {
         price: product.price,
         quantity: product.quantity,
         createdAt: new Date().getTime(),
-        createdBy: user.username,
+        createdBy: user?.username || body.customerId || body.customerInfo?.phoneNumber || '',
         updatedAt: new Date().getTime(),
-        updatedBy: user.username
+        updatedBy: user?.username || body.customerId || body.customerInfo?.phoneNumber || ''
       }))
     })
     return res;
@@ -54,7 +54,7 @@ export class OrderRepo {
     const items = await this.db.orderItem.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
-      select: { id: true, price: true, orderId: true, name: true, quantity: true, productId: true }
+      select: { id: true, price: true, orderId: true, name: true, quantity: true, productId: true, classify: true, product: {select: {images: true}}  }
     })
     const total = await this.db.orderItem.count({ where: whereOpt })
     return new PaginationItemModel(items, total, 1, 0)
@@ -66,7 +66,21 @@ export class OrderRepo {
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
       skip, take,
-      select: defaultSelect
+      select:{...defaultSelect, customerInfo: true}
+    })
+    const total = await this.db.order.count({ where: whereOpt })
+    return new PaginationItemModel(items, total, page, take)
+  }
+  async findListByCustomer(user: SessionUserModel,filters: FilterParams) {
+    const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
+    const whereOpt: Prisma.OrderWhereInput = { active: true, customerId: user.userId }
+    const items = await this.db.order.findMany({
+      where: whereOpt,
+      orderBy: { updatedAt: 'desc' },
+      skip, take,
+      select: {...defaultSelect, orderItems: {
+        select: {id: true, name: true, quantity: true, price: true, classify: true, product: {select: {images: true}} }
+      }}
     })
     const total = await this.db.order.count({ where: whereOpt })
     return new PaginationItemModel(items, total, page, take)
@@ -75,7 +89,9 @@ export class OrderRepo {
   async findOne(id: string) {
     const item = await this.db.order.findUnique({
       where: { id },
-      select: defaultSelect
+      select: {...defaultSelect, orderItems: {
+        select: {id: true, name: true, quantity: true, price: true, classify: true, product: {select: {images: true}}  }
+      }}
     })
     return item
   }
@@ -85,6 +101,19 @@ export class OrderRepo {
       where: { id },
       data: {
         status,
+        updatedAt: new Date().getTime(),
+        updatedBy: user.username
+      },
+      select: defaultSelect
+
+    })
+    return item
+  }
+  async update(id: string, user: SessionUserModel, data: UpdateOrderDto) {
+    const item = await this.db.order.update({
+      where: { id },
+      data: {
+        ...data,
         updatedAt: new Date().getTime(),
         updatedBy: user.username
       },
