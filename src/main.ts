@@ -28,7 +28,12 @@ async function bootstrap() {
   app.use(cookieParser())
 
   app.use(helmet())
-
+app.use((req, res, next) => {
+  if (req.path.startsWith('/.well-known')) {
+    return res.status(404).send('Not Found');
+  }
+  next();
+});
   app.setGlobalPrefix(config.get('GLOBAL_API_PREFIX', ''))
 
   app.useGlobalFilters(new GlobalExceptionFilter())

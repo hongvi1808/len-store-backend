@@ -9,14 +9,17 @@ import { GoogleAuthGuard } from 'src/configs/guards/google-auth.guard';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
-import { LoginAuthDto } from './dto/login.dto';
+import { GoogleAuthDto, LoginAuthDto } from './dto/login.dto';
 import { RegisterAuthDto } from './dto/register.dto';
 import { AuthResponse } from './model/auth.response';
 import { UserDataCallback } from './model/data-gg-callback.response';
+import { GoogleAuthService } from './google.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService,
+    private readonly ggService: GoogleAuthService,
+  ) { }
 
   @NoGlobalAuth()
   @UseInterceptors(SetCookieInterceptor)
@@ -40,39 +43,48 @@ export class AuthController {
   }
 
   @Get('/logout')
-    logout(@SessionUser() user: SessionUserModel, @Res({ passthrough: true }) res: Response) {
-        const result = this.authService.logout(user);
-        res.clearCookie(SYSTEM_KEY.RefreshTokenCookieKey, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'strict', // Adjust as necessary
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
-        res.clearCookie(SYSTEM_KEY.AccessTokenCookieKey, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'strict', // Adjust as necessary
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
-        res.clearCookie(SYSTEM_KEY.RoleCookieKey, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-            sameSite: 'strict', // Adjust as necessary
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
-        return true;
-    }
-  
+  logout(@SessionUser() user: SessionUserModel, @Res({ passthrough: true }) res: Response) {
+    const result = this.authService.logout(user);
+    res.clearCookie(SYSTEM_KEY.RefreshTokenCookieKey, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Adjust as necessary
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+    res.clearCookie(SYSTEM_KEY.AccessTokenCookieKey, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Adjust as necessary
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+    res.clearCookie(SYSTEM_KEY.RoleCookieKey, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Adjust as necessary
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+    return true;
+  }
+
   @NoGlobalAuth()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  async googleAuth(@SessionUser() user: SessionUserModel) { }
+  googleAuth() { }
 
   @NoGlobalAuth()
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
-  async googleAuthCallback(@SessionUser()  user: UserDataCallback) {
+  async googleAuthCallback(@SessionUser() user: UserDataCallback) {
     return this.authService.googleCallback(user)
+  }
+
+  @NoGlobalAuth()
+  // @UseInterceptors(SetCookieInterceptor)
+  @Post('google/verify')
+  async googleVerify(@Body() credential: string) {
+    const user =  await this.ggService.verifyGoogleLogin(credential)
+    console.log(user)
+    // return this.authService.googleCallback(user)
   }
 
 }

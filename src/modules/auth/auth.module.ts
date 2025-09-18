@@ -10,6 +10,7 @@ import { LenRedisModule } from 'src/common/redis/redis.module';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PermissionModule } from '../permission/permission.module';
+import { GoogleAuthService } from './google.service';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { PermissionModule } from '../permission/permission.module';
     LenRedisModule, UserModule, PermissionModule, ConfigModule,
   ],
   controllers: [AuthController,],
-  providers: [ AuthService, AccessTokenStrategy, RefreshTokenStrategy, GoogleStrategy, ],
+  providers: [ AuthService, AccessTokenStrategy, RefreshTokenStrategy, GoogleStrategy, GoogleAuthService],
   exports: [AuthService]
 })
 export class AuthModule { }
