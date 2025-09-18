@@ -16,7 +16,7 @@ export class SetCookieInterceptor implements NestInterceptor {
                     response.cookie(SYSTEM_KEY.RefreshTokenCookieKey, refreshToken, {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-                        sameSite: 'none', // Adjust as necessary
+                        sameSite: 'strict', // Adjust as necessary
                         maxAge: 2592000000, // 30 days
                     });
                 }
@@ -24,7 +24,7 @@ export class SetCookieInterceptor implements NestInterceptor {
                     response.cookie(SYSTEM_KEY.AccessTokenCookieKey, accessToken, {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-                        sameSite: 'none', // Adjust as necessary
+                        sameSite: 'strict', // Adjust as necessary
                         maxAge: 2592000000, // 30 days
                     });
                 }
@@ -32,7 +32,7 @@ export class SetCookieInterceptor implements NestInterceptor {
                     response.cookie(SYSTEM_KEY.RoleCookieKey, role, {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-                        sameSite: 'none', // Adjust as necessary
+                        sameSite: 'strict', // Adjust as necessary
                         maxAge: 2592000000, // 30 days
                     });
                 }
