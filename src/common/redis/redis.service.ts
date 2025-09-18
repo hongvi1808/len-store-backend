@@ -1,7 +1,7 @@
 import { InjectRedis } from "@nestjs-modules/ioredis";
 import { Injectable } from "@nestjs/common";
 import Redis from "ioredis";
-import { CustomExceptionFilter } from "src/configs/filters/custom-exception.filter";
+import { CustomExceptionFilter } from "../../configs/filters/custom-exception.filter";
 
 @Injectable()
 export class RedisService {

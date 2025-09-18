@@ -1,5 +1,5 @@
 import { IsOptional, IsString } from "class-validator";
-import { PhoneNumber } from "src/configs/decorators/phone-number.decorator";
+import { PhoneNumber } from "../../../configs/decorators/phone-number.decorator";
 
 export class LoginAuthDto {
     @IsString()

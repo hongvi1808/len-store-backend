@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from "passport-google-oauth20";
-import { SYSTEM_KEY } from "src/common/constants/enums";
+import { SYSTEM_KEY } from "../../../common/constants/enums";
 import { UserDataCallback } from "../model/data-gg-callback.response";
 
 @Injectable()

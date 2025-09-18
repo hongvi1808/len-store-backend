@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { PaymentMethod } from "@prisma/client";
 import { Type } from "class-transformer";
 import { IsArray, IsInt, IsOptional, IsString } from "class-validator";
-import { PhoneNumber } from "src/configs/decorators/phone-number.decorator";
+import { PhoneNumber } from "../../../configs/decorators/phone-number.decorator";
 
 export class CustomerCreateOrderDto {
   @IsOptional()

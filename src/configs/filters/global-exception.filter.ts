@@ -1,5 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { ResErrorModel } from 'src/common/models/res-error.model';
+import { ResErrorModel } from '../../common/models/res-error.model';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

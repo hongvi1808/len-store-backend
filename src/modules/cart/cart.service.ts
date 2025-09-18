@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
-import { SessionUserModel } from 'src/common/models/session-user.model';
+import { SessionUserModel } from '../../common/models/session-user.model';
 import { CartItemRepo } from './cart.repo';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
 import { CartItemRes } from './entities/cart.entity';
-import { FilterParams } from 'src/common/models/filter-params.model';
+import { FilterParams } from '../../common/models/filter-params.model';
 
 @Injectable()
 export class CartItemService {

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepo } from './category.repo';
-import { SessionUserModel } from 'src/common/models/session-user.model';
-import { FilterParams } from 'src/common/models/filter-params.model';
+import { SessionUserModel } from '../../common/models/session-user.model';
+import { FilterParams } from '../../common/models/filter-params.model';
 import { CategoryRes } from './entities/category.entity';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
 import { CategoryTags } from '@prisma/client';
 
 @Injectable()

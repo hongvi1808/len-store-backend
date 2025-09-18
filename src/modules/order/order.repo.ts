@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CustomerCreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { SessionUserModel } from 'src/common/models/session-user.model';
-import { PrismaService } from 'src/common/prisma/prisma.service';
+import { SessionUserModel } from '../../common/models/session-user.model';
+import { PrismaService } from '../../common/prisma/prisma.service';
 import { OrderStatus, Prisma } from '@prisma/client';
 import { uuidv4, uuidv7 } from 'uuidv7';
-import { forceToInfoPagition, generateOrderCode } from 'src/common/utils/func';
-import { FilterParams } from 'src/common/models/filter-params.model';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { forceToInfoPagition, generateOrderCode } from '../../common/utils/func';
+import { FilterParams } from '../../common/models/filter-params.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
 import { OrderCreate } from './entities/order.entity';
 
 const defaultSelect = { id: true, customerId: true, code: true, createdAt: true, totalPrice: true, status: true }

@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
-import { SYSTEM_KEY } from 'src/common/constants/enums';
+import { SYSTEM_KEY } from '../../common/constants/enums';
 
 @Injectable()
 export class SetCookieInterceptor implements NestInterceptor {

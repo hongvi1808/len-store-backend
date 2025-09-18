@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
-import { MailerService } from 'src/common/mailer/mailer.service';
-import { PATTERNS, QUEUES } from 'src/common/rabbitmq/rabbit.contant';
-import { ackMessage, nackMessage } from 'src/common/rabbitmq/rabit.util';
+import { MailerService } from '../../common/mailer/mailer.service';
+import { PATTERNS, QUEUES } from '../../common/rabbitmq/rabbit.contant';
+import { ackMessage, nackMessage } from '../../common/rabbitmq/rabit.util';
 
 @Controller()
 export class MailConsumer {

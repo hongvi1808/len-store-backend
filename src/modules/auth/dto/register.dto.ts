@@ -1,6 +1,6 @@
 import { UserRole } from "@prisma/client";
 import { IsNumber, IsString } from "class-validator";
-import { PhoneNumber } from "src/configs/decorators/phone-number.decorator";
+import { PhoneNumber } from "../../../configs/decorators/phone-number.decorator";
 
 export class RegisterAuthDto {
   @PhoneNumber()

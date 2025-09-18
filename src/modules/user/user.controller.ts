@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FilterParams } from 'src/common/models/filter-params.model';
+import { FilterParams } from '../../common/models/filter-params.model';
 
 @Controller('user')
 export class UserController {

@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CustomerCreateOrderDto } from './dto/create-order.dto';
-import { SessionUser } from 'src/configs/decorators/session-user.decorator';
-import { SessionUserModel } from 'src/common/models/session-user.model';
-import { FilterParams } from 'src/common/models/filter-params.model';
+import { SessionUser } from '../../configs/decorators/session-user.decorator';
+import { SessionUserModel } from '../../common/models/session-user.model';
+import { FilterParams } from '../../common/models/filter-params.model';
 import { OrderStatus } from '@prisma/client';
-import { RabbitService } from 'src/common/rabbitmq/rabbit.service';
-import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
+import { RabbitService } from '../../common/rabbitmq/rabbit.service';
+import { NoGlobalAuth } from '../../configs/decorators/no-auth.decorator';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('order')

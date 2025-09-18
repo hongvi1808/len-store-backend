@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { SYSTEM_KEY } from "src/common/constants/enums";
-import { SessionUserModel } from "src/common/models/session-user.model";
+import { SYSTEM_KEY } from "../../../common/constants/enums";
+import { SessionUserModel } from "../../../common/models/session-user.model";
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, SYSTEM_KEY.RefreshTokenPassportKey) {
 

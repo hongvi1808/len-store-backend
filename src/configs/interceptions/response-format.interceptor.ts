@@ -1,6 +1,6 @@
 import {  CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import {  map, Observable } from 'rxjs';
-import { ResSuccessModel } from 'src/common/models/res-success.model';
+import { ResSuccessModel } from '../../common/models/res-success.model';
 
 @Injectable()
 export class ResponseFormatInterceptor implements NestInterceptor {

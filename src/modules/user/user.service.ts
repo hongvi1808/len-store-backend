@@ -3,9 +3,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepo } from './user.repo';
 import * as bcrypt from 'bcrypt';
-import { FilterParams } from 'src/common/models/filter-params.model';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
-import { genRandomPassword } from 'src/common/utils/func';
+import { FilterParams } from '../../common/models/filter-params.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
+import { genRandomPassword } from '../../common/utils/func';
 import { uuidv7 } from 'uuidv7';
 import { Prisma, UserRole } from '@prisma/client';
 

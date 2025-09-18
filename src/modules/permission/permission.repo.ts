@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
-import { FilterParams } from 'src/common/models/filter-params.model';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
-import { PrismaService } from 'src/common/prisma/prisma.service';
-import { forceToInfoPagition } from 'src/common/utils/func';
+import { FilterParams } from '../../common/models/filter-params.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { forceToInfoPagition } from '../../common/utils/func';
 
 const defaultSelect = { id: true, name: true, role: true, url: true }
 @Injectable()

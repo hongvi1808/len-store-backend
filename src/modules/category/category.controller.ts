@@ -2,11 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, HttpCode
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { SessionUser } from 'src/configs/decorators/session-user.decorator';
-import { SessionUserModel } from 'src/common/models/session-user.model';
-import { FilterParams } from 'src/common/models/filter-params.model';
+import { SessionUser } from '../../configs/decorators/session-user.decorator';
+import { SessionUserModel } from '../../common/models/session-user.model';
+import { FilterParams } from '../../common/models/filter-params.model';
 import { CategoryTags } from '@prisma/client';
-import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
+import { NoGlobalAuth } from '../../configs/decorators/no-auth.decorator';
 
 @Controller('category')
 export class CategoryController {

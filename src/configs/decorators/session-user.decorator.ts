@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { SessionUserModel } from 'src/common/models/session-user.model';
+import { SessionUserModel } from '../../common/models/session-user.model';
 
 export const SessionUser = createParamDecorator(
     (data: string, ctx: ExecutionContext) => {

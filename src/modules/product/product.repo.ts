@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { PrismaService } from 'src/common/prisma/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service';
 import { uuidv7 } from 'uuidv7';
-import { SessionUserModel } from 'src/common/models/session-user.model';
+import { SessionUserModel } from '../../common/models/session-user.model';
 import { CategoryTags, Prisma } from '@prisma/client';
-import { forceToInfoPagition, genBaseSlug } from 'src/common/utils/func';
-import { FilterParams } from 'src/common/models/filter-params.model';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { forceToInfoPagition, genBaseSlug } from '../../common/utils/func';
+import { FilterParams } from '../../common/models/filter-params.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
 import { ProductRes } from './entities/product.entity';
 
 const defaultSelect = {

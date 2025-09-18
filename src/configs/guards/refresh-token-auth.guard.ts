@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
-import { SYSTEM_KEY } from 'src/common/constants/enums';
+import { SYSTEM_KEY } from '../../common/constants/enums';
 import { CustomExceptionFilter } from '../filters/custom-exception.filter';
 
 @Injectable()

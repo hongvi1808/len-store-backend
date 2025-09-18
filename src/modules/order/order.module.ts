@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { OrderRepo } from './order.repo';
-import { RabbitModule } from 'src/common/rabbitmq/rabbit.module';
+import { RabbitModule } from '../../common/rabbitmq/rabbit.module';
 
 @Module({
   imports: [RabbitModule],

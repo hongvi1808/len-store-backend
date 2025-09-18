@@ -2,10 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy, VerifyCallback } from "passport-jwt";
-import { SYSTEM_KEY } from "src/common/constants/enums";
-import { SessionUserModel } from "src/common/models/session-user.model";
+import { SYSTEM_KEY } from "../../../common/constants/enums";
+import { SessionUserModel } from "../../../common/models/session-user.model";
 import { AuthService } from "../auth.service";
-import { CustomExceptionFilter } from "src/configs/filters/custom-exception.filter";
+import { CustomExceptionFilter } from "../../../configs/filters/custom-exception.filter";
 import { Request } from "express";
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, SYSTEM_KEY.AccessTokenPassportKey) {

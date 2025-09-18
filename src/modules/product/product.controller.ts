@@ -2,10 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, UseInter
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { SessionUser } from 'src/configs/decorators/session-user.decorator';
-import { SessionUserModel } from 'src/common/models/session-user.model';
-import { FilterParams } from 'src/common/models/filter-params.model';
-import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
+import { SessionUser } from '../../configs/decorators/session-user.decorator';
+import { SessionUserModel } from '../../common/models/session-user.model';
+import { FilterParams } from '../../common/models/filter-params.model';
+import { NoGlobalAuth } from '../../configs/decorators/no-auth.decorator';
 import { CategoryTags } from '@prisma/client';
 
 @Controller('product')

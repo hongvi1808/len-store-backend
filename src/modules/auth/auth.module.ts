@@ -6,7 +6,7 @@ import { GoogleStrategy } from './passports/google.strategy';
 import { AuthService } from './auth.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LenRedisModule } from 'src/common/redis/redis.module';
+import { LenRedisModule } from '../../common/redis/redis.module';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PermissionModule } from '../permission/permission.module';

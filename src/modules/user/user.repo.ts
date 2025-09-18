@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/common/prisma/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service';
 import { uuidv7 } from 'uuidv7';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FilterParams } from 'src/common/models/filter-params.model';
-import { forceToInfoPagition } from 'src/common/utils/func';
+import { FilterParams } from '../../common/models/filter-params.model';
+import { forceToInfoPagition } from '../../common/utils/func';
 import { Prisma, UserRole } from '@prisma/client';
-import { PaginationItemModel } from 'src/common/models/res-success.model';
+import { PaginationItemModel } from '../../common/models/res-success.model';
 
 const defaultSelect = {
   id: true, phoneNumber: true, fullName: true,
