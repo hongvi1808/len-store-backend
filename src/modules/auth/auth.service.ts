@@ -22,7 +22,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         private readonly userService: UserService,
         private readonly permissionService: PermissionService,
-         private readonly redisClient: RedisService,
+        //  private readonly redisClient: RedisService,
     ) { }
     async register(body: RegisterAuthDto): Promise<AuthResponse> {
         // if (!body.phoneNumber && !body.email) 
@@ -80,10 +80,12 @@ export class AuthService {
   }
 
   async addSidToBlacklist(sid: string): Promise<any> {
-    return this.redisClient.set(`${SYSTEM_KEY.PrefixKeySessionBlackList}_${sid}`, 1,)
+    // return this.redisClient.set(`${SYSTEM_KEY.PrefixKeySessionBlackList}_${sid}`, 1,)
+    return 
   }
     async sidInBlacklist(sid: string): Promise<string | null> {
-    return this.redisClient.get(`${SYSTEM_KEY.PrefixKeySessionBlackList}_${sid}`);
+    // return this.redisClient.get(`${SYSTEM_KEY.PrefixKeySessionBlackList}_${sid}`);
+    return null;
 
   }
     async deniedPermission(request: {role: UserRole, url: string}): Promise<boolean> {

@@ -40,6 +40,7 @@ export class OrderController {
   findListByCustomer(@Query() filter: FilterParams, @SessionUser() user: SessionUserModel) {
     return this.orderService.findListByCustomer(user, filter);
   }
+    @NoGlobalAuth()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);

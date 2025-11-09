@@ -10,15 +10,18 @@ CREATE TYPE "public"."PaymentStatus" AS ENUM ('Pending', 'Success', 'Failed', 'R
 -- CreateEnum
 CREATE TYPE "public"."UserRole" AS ENUM ('Admin', 'Seller', 'Customer');
 
+-- CreateEnum
+CREATE TYPE "public"."CategoryTags" AS ENUM ('handmade', 'wool', 'tool', 'material', 'combo', 'promotion', 'other');
+
 -- CreateTable
 CREATE TABLE "public"."user" (
     "id" TEXT NOT NULL,
-    "full-name" TEXT NOT NULL,
+    "full_name" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "hash" TEXT NOT NULL,
-    "phone-number" TEXT,
+    "phone_number" TEXT,
     "email" TEXT,
-    "birth-date" BIGINT NOT NULL DEFAULT 0,
+    "birth_date" BIGINT NOT NULL DEFAULT 0,
     "role" "public"."UserRole" NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "alive" BOOLEAN NOT NULL DEFAULT true,
@@ -52,6 +55,8 @@ CREATE TABLE "public"."product" (
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT,
+    "images" JSONB DEFAULT '[]',
+    "classify" JSONB DEFAULT '[]',
     "price" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "stock" INTEGER NOT NULL DEFAULT 0,
     "active" BOOLEAN NOT NULL DEFAULT true,
@@ -69,6 +74,7 @@ CREATE TABLE "public"."category" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
+    "tag" "public"."CategoryTags" NOT NULL DEFAULT 'other',
     "active" BOOLEAN NOT NULL DEFAULT true,
     "alive" BOOLEAN NOT NULL DEFAULT true,
     "created_at" BIGINT NOT NULL,
@@ -99,6 +105,8 @@ CREATE TABLE "public"."cart_item" (
     "id" TEXT NOT NULL,
     "customer_id" TEXT,
     "product_id" TEXT NOT NULL,
+    "classify" TEXT,
+    "price" DOUBLE PRECISION,
     "quantity" INTEGER NOT NULL DEFAULT 1,
     "alive" BOOLEAN NOT NULL DEFAULT true,
     "created_at" BIGINT NOT NULL,
@@ -114,9 +122,11 @@ CREATE TABLE "public"."order" (
     "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "customer_id" TEXT,
+    "customer_info" JSONB DEFAULT '{}',
     "total_price" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "status" "public"."OrderStatus" NOT NULL DEFAULT 'Pending',
     "order_number" INTEGER NOT NULL,
+    "note" TEXT,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" BIGINT NOT NULL,
     "created_by" TEXT NOT NULL,
@@ -132,6 +142,7 @@ CREATE TABLE "public"."order_item" (
     "orderId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL DEFAULT 0,
+    "classify" TEXT,
     "name" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "active" BOOLEAN NOT NULL DEFAULT true,

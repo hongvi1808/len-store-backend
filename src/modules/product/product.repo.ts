@@ -116,15 +116,15 @@ export class ProductRepo {
   }
   async findListByTag(tag: CategoryTags, filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, category: { tag } }
-    const items = await this.db.productCategory.findMany({
+    const whereOpt: Prisma.ProductWhereInput = { alive: true, productCategories: { some: { category: { tag } } } }
+    const items = await this.db.product.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
       skip, take,
-      select: { id: true, product: { select: defaultSelect } }
+      select:  defaultSelect 
     })
-    const total = await this.db.productCategory.count({ where: whereOpt })
-    const res: ProductRes[] = items?.map(i => i.product).map(i => ({
+    const total = await this.db.product.count({ where: whereOpt })
+    const res: ProductRes[] = items?.map(i => ({
       id: i.id,
       stock: i.stock,
       slug: i.slug,

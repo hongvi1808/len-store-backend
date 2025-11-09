@@ -18,7 +18,8 @@ import { GoogleAuthService } from './google.service';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRES_IN }
     }),
-    LenRedisModule, UserModule, PermissionModule, ConfigModule,
+    // LenRedisModule,
+     UserModule, PermissionModule, ConfigModule,
   ],
   controllers: [AuthController,],
   providers: [ AuthService, AccessTokenStrategy, RefreshTokenStrategy, GoogleStrategy, GoogleAuthService],
