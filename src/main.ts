@@ -43,7 +43,12 @@ app.use((req, res, next) => {
   app.useGlobalInterceptors(new ResponseFormatInterceptor(), new BigIntInterceptor())
 
   // app.useGlobalGuards(new AccessTokenAuthGuard(app.get(Reflector)))
-
+app.use((req, res, next) => {
+  if (req.method === 'HEAD' && req.path === '/') {
+    return res.status(200).send('OK');
+  }
+  next();
+});
   const configDoc = new DocumentBuilder()
     .setTitle('Lenlen API')
     .setDescription('All the apis of lenlen commerce shop')
