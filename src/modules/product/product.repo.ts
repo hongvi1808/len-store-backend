@@ -71,7 +71,7 @@ export class ProductRepo {
   }
   async findListByCategory(categoryId: string, filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, categoryId }
+    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, categoryId, product: { alive: true, active: true } }
     const items = await this.db.productCategory.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
@@ -94,7 +94,7 @@ export class ProductRepo {
   }
   async findListBySlugCategory(slug: string, filters: FilterParams) {
     const { skip, take, page } = forceToInfoPagition(filters.page, filters.limit)
-    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, category: { slug } }
+    const whereOpt: Prisma.ProductCategoryWhereInput = { alive: true, active: true, category: { slug }, product: { alive: true, active: true } }
     const items = await this.db.productCategory.findMany({
       where: whereOpt,
       orderBy: { updatedAt: 'desc' },
@@ -205,7 +205,10 @@ export class ProductRepo {
     const data: Prisma.ProductUpdateInput = {
       updatedAt: new Date().getTime(),
       updatedBy: user.username,
-      alive: false
+      alive: false,
+      productCategories: {
+        deleteMany: {productId: id},
+      }
     }
     const res = await this.db.product.update({ where: { id }, data, select: defaultSelect })
     return res;
